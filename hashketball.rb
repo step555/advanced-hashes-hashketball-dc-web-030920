@@ -151,6 +151,7 @@ end
 def team_names
   array = []
   game_hash.each do |place, team_stats|
+    #each doesn't try to return something. map tries to put something into a set of data
     if team_stats[:team_name]
       array << team_stats[:team_name]
     end
@@ -172,7 +173,6 @@ def player_numbers(team_name)
         if attribute == :players
         value.map do |number|
           array << number[:number]
-          # return number[:number]
           end
         end
       end
@@ -182,23 +182,34 @@ def player_numbers(team_name)
 end
 
 def player_stats(player_name)
-  new_hash = {}
+  # new_hash = {}
+  # game_hash.each do |place, team_stats|
+  #   team_stats.each do |attribute, value|
+  #     if attribute == :players
+  #       value.each do |player|
+  #         if player[:player_name] == player_name
+  #             new_hash = player.delete_if do |player_key, player_value| 
+  #               player_key == :player_name
+  #       # binding.pry
+  #             # end
+  #           end
+  #         end
+  #       end
+  #     end
+  #   end
+  # end 
+  # new_hash
+  excluding_name = {}
   game_hash.each do |place, team_stats|
-    team_stats.each do |attribute, value|
-      if attribute == :players
-        value.each do |player|
-          if player[:player_name] == player_name
-              new_hash = player.delete_if do |player_key, player_value| 
-                player_key == :player_name
-        # binding.pry
-              # end
-            end
-          end
+    team_stats[:players].each do |player|
+      if player[:player_name] == player_name
+        excluding_name = player.delete_if do |player_key, player_value|
+          player_key == :player_name
         end
       end
     end
-  end 
-  new_hash
+  end
+  excluding_name
 end
 
 def big_shoe_rebounds 
@@ -221,12 +232,12 @@ end
 #   game_hash.each do |place, team_stats|
 #     team_stats.each do |attribute, value|
 #       if attribute == :players
-#       attribute.each do |mvalue|
-#         if player[:shoe] > big_shoe
-#           big_shoe = player[:shoe]
-#           rebounds = player[:rebounds]
+#       value.each do |players|
+#           # binding.pry
+#         if players[:shoe] > big_shoe
+#           big_shoe = players[:shoe]
+#           rebounds = players[:rebounds]
 #           end
-#           binding.pry
 #         end
 #       end 
 #     end
@@ -250,8 +261,22 @@ def most_points_scored
 end
 
 def winning_team
-  score = 0
-  
+  home_score = 0
+  away_score = 0
+  game_hash.each do |place, team_stats|
+    team_stats[:players].each do |player|
+      if place == :away
+        away_score += player[:points]
+      else
+        home_score += player[:points]
+      end
+    end
+   end
+    if away_score > home_score
+     return game_hash[:away][:team_name]
+    else
+      return game_hash[:home][:team_name]
+  end
 end
 
 def player_with_longest_name
@@ -259,14 +284,36 @@ def player_with_longest_name
   game_hash.each do |place, team_stats|
     team_stats[:players].each do |player|
       longest_name << player[:player_name]
-    
     end
   end
   longest_name.max_by do |name| 
     name.length
   end
+  # longest_name = ""
+  # game_hash.each do |place, team_stats|
+  #   team_stats[:players].each do |player|
+  #     if longest_name.length < player[:player_name].length
+  #       longest_name = player[:player_name]
+  #     end
+  #   end
+  # end
+  # longest_name
 end
 
-def long_name_steals_a_ton
-  
+def long_name_steals_a_ton?
+  longest_name = ""
+  most_steals = 0
+  game_hash.each do |place, team_stats|
+    team_stats[:players].each do |player|
+      if longest_name.length < player[:player_name].length
+        longest_name = player[:player_name]
+      if most_steals < player[:steals]
+        most_steals = player[:steals]
+          # binding.pry
+        return true
+          end
+        end
+      end
+    end
+  #expected true
 end
