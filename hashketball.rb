@@ -112,6 +112,7 @@ end
 
 def num_points_scored(player_name)
   game_hash.each do |place, team_stats|
+    # binding.pry
     team_stats.each do |attribute, value|
       if attribute == :players
         value.each do |player|
@@ -302,6 +303,7 @@ end
 
 def long_name_steals_a_ton?
   longest_name = ""
+  name_of_most_steals = ""
   most_steals = 0
   game_hash.each do |place, team_stats|
     team_stats[:players].each do |player|
@@ -309,11 +311,16 @@ def long_name_steals_a_ton?
         longest_name = player[:player_name]
       if most_steals < player[:steals]
         most_steals = player[:steals]
+        name_of_most_steals = player[:player_name]
+      if longest_name == name_of_most_steals
           # binding.pry
         return true
+      else
+        return false
           end
         end
       end
     end
+  end
   #expected true
 end
